@@ -9,71 +9,77 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 // create user
-app.post('/users/create', (req, res) => {
-    User.create(req.body).then(result => {
-        console.log('User created successfully!');
-        res.status(201).send(result);
-    }).catch(err => {
+app.post('/users/create', async (req, res) => {
+    try {
+        const user = await User.create(req.body);
+        res.status(201).send(user);
+    } catch (err) {
         res.status(400).send({
             errorName: err.name,
             errorMessage: err.message,
         });
-    })
+    }
 });
 
 // read single user
-app.get('/users/:id', (req, res) => {
-    User.findById(req.params.id).then(user => {
+app.get('/users/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        console.log(user);
         if (!user) {
-            return res.status(400).send();
+            return res.status(400).send("User doesn't exist");
         }
         res.status(200).send(user);
-    }).catch(err => {
+    } catch (err) {
         res.status(500).send(err);
-    })
+    }
 });
 
 // read all user
-app.get('/users', (req, res) => {
-    User.find({}).then(users => {
+app.get('/users', async (req, res) => {
+    try {
+        const users = await User.find({});
         res.status(200).send(users);
-    }).catch(err => {
+    } catch (err) {
         res.status(500).send(err);
-    })
+    }
 });
 
 // create task
-app.post('/tasks/create', (req, res) => {
-    Task.create(req.body).then(result => {
-        console.log('Task created successfully!');
-        res.status(201).send(result);
-    }).catch(err => {
+app.post('/tasks/create', async (req, res) => {
+    try {
+        const task = await Task.create(req.body);
+        res.status(201).send(task);
+    } catch (err) {
         res.status(400).send({
             errorName: err.name,
             errorMessage: err.message,
         });
-    })
+    }
 });
 
 // read single task
-app.get('/tasks/:id', (req, res) => {
-    Task.findById(req.params.id).then(user => {
-        if (!user) {
-            return res.status(400).send();
+app.get('/tasks/:id', async (req, res) => {
+    try {
+        const task = await Task.findById(req.params.id);
+        console.log(task);
+        if (!task) {
+            return res.status(400).send("Task doesn't exist");
         }
-        res.status(200).send(user);
-    }).catch(err => {
+        res.status(200).send(task);
+    } catch (err) {
         res.status(500).send(err);
-    })
+    }
 });
 
 // read all tasks
-app.get('/tasks', (req, res) => {
-    Task.find({}).then(users => {
-        res.status(200).send(users);
-    }).catch(err => {
+app.get('/tasks', async (req, res) => {
+    try {
+        const tasks = await Task.find({});
+        res.status(200).send(tasks);
+    } catch (err) {
         res.status(500).send(err);
-    })
+    }
 });
 
 
