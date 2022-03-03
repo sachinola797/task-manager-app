@@ -3,6 +3,7 @@ const User = require('../models/user');
 const auth = require('../middleware/auth');
 const multer = require('multer');
 const sharp = require('sharp');
+const {sendWelcomeEmail, sendDepartureEmail} = require('../emails/account');
 
 const userRouter = new express.Router();
 
@@ -11,6 +12,7 @@ userRouter.post('/users/create', async (req, res) => {
     try {
         const user = await User.create(req.body);
         const token = await user.generateAuthToken();
+        sendWelcomeEmail(req.body.email, req.body.name);
         res.status(201).send({
             user,
             token
@@ -170,6 +172,7 @@ userRouter.delete('/users/delete/:id', auth, async (req, res) => {
         if (!user) {
             return res.status(404).send("User doesn't exist");
         }
+        sendDepartureEmail(user.email, user.name);
         await user.remove();
         res.status(200).send("User deleted successfully!");
     } catch (err) {
