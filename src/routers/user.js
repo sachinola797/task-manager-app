@@ -50,13 +50,6 @@ userRouter.post('/users/upload/avatar', auth, upload.single('avatar'), async (re
     res.status(400).send({err: err.message});
 });
 
-// delete user avatar
-userRouter.delete('/users/delete/avatar', auth, async (req, res) => {
-    req.user.avatar = undefined;
-    await req.user.save();
-    res.status(200).send({message: 'Avatar deleted successfully!'})
-});
-
 // fetch user avatar by id
 userRouter.get('/users/:id/avatar', async (req, res) => {
     try {
@@ -66,6 +59,29 @@ userRouter.get('/users/:id/avatar', async (req, res) => {
         }
         res.setHeader('Content-Type', 'image/png')
         res.status(200).send(user.avatar);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+// delete user avatar
+userRouter.delete('/users/delete/avatar', auth, async (req, res) => {
+    req.user.avatar = undefined;
+    await req.user.save();
+    res.status(200).send({message: 'Avatar deleted successfully!'})
+});
+
+// read single user (only for admin)
+userRouter.get('/users/:id', auth, async (req, res) => {
+    if (req.user.role !== 'ADMIN') {
+        return res.status(401).send({message: 'Action not allowed'});
+    }
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).send("User doesn't exist");
+        }
+        res.status(200).send(user);
     } catch (err) {
         res.status(500).send(err);
     }
@@ -83,7 +99,6 @@ userRouter.get('/users', auth, async (req, res) => {
         res.status(500).send(err);
     }
 });
-
 
 
 // user login
@@ -179,35 +194,5 @@ userRouter.delete('/users/delete/:id', auth, async (req, res) => {
         res.status(500).send(err);
     }
 });
-
-// read all user
-userRouter.get('/users', auth, async (req, res) => {
-    if (req.user.role !== 'ADMIN') {
-        return res.status(401).send({message: 'Action not allowed'});
-    }
-    try {
-        const users = await User.find({});
-        res.status(200).send(users);
-    } catch (err) {
-        res.status(500).send(err);
-    }
-});
-
-// read single user (only for admin)
-userRouter.get('/users/:id', auth, async (req, res) => {
-    if (req.user.role !== 'ADMIN') {
-        return res.status(401).send({message: 'Action not allowed'});
-    }
-    try {
-        const user = await User.findById(req.params.id);
-        if (!user) {
-            return res.status(404).send("User doesn't exist");
-        }
-        res.status(200).send(user);
-    } catch (err) {
-        res.status(500).send(err);
-    }
-});
-
 
 module.exports = userRouter;
