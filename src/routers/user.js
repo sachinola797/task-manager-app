@@ -73,7 +73,7 @@ userRouter.delete('/users/delete/avatar', auth, async (req, res) => {
 
 // read single user (only for admin)
 userRouter.get('/users/:id', auth, async (req, res) => {
-    if (req.user.role !== 'ADMIN') {
+    if (req.user._id.toString() !== req.params.id && req.user.role !== 'ADMIN') {
         return res.status(401).send({message: 'Action not allowed'});
     }
     try {
@@ -182,7 +182,6 @@ userRouter.delete('/users/delete/:id', auth, async (req, res) => {
         return res.status(401).send({message: 'Action not allowed'});
     }
     try {
-        console.log(req.user);
         const user = req.user._id.toString() !== req.params.id ? await User.findOne({_id: req.params.id}): req.user;
         if (!user) {
             return res.status(404).send("User doesn't exist");

@@ -15,12 +15,12 @@ const sendWelcomeEmail = (email, name) => {
       Team TM
     `,
   })
-  .then(() => {
-    console.log('Email sent')
-  })
-  .catch((error) => {
-    console.error(error)
-  })
+  // .then(() => {
+  //   console.log('Email sent')
+  // })
+  // .catch((error) => {
+  //   console.error(error)
+  // })
 }
 
 const sendDepartureEmail = (email, name) => {
@@ -34,12 +34,12 @@ const sendDepartureEmail = (email, name) => {
       Team TM
     `,
   })
-  .then(() => {
-    console.log('Email sent')
-  })
-  .catch((error) => {
-    console.error(error)
-  })
+  // .then(() => {
+  //   console.log('Email sent')
+  // })
+  // .catch((error) => {
+  //   console.error(error)
+  // })
 }
 
 // const msg = {
